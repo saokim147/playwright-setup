@@ -42,6 +42,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install browser (${{ matrix.browser }})
+        run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run full suite (${{ matrix.browser }})
         run: pnpm exec playwright test --project=${{ matrix.browser }}
