@@ -1,0 +1,110 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  smoke:
+    name: PR smoke tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: true
+      TEST_ENV: staging
+      SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD || 'secret_sauce' }}
+    outputs:
+      passed: ${{ steps.stats.outputs.passed }}
+      failed: ${{ steps.stats.outputs.failed }}
+      skipped: ${{ steps.stats.outputs.skipped }}
+      duration: ${{ steps.stats.outputs.duration }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm lint
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run smoke suite
+        id: smoke
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --project=chromium --grep "@smoke" 2>&1 | tee smoke-output.log
+
+      - name: Collect stats
+        id: stats
+        if: ${{ !cancelled() }}
+        run: |
+          grep -Eo '[0-9]+ passed|[0-9]+ failed|[0-9]+ skipped|[0-9.]+s' smoke-output.log | tail -4 || true
+          SUMMARY=$(grep -E '^[[:space:]]*[0-9]+ (passed|failed|skipped|flaky)' smoke-output.log | tail -1 || echo "0 passed")
+          echo "summary=$SUMMARY" >> "$GITHUB_OUTPUT"
+
+      - name: Upload PR report artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-report-${{ github.event.pull_request.number }}
+          path: playwright-report
+          retention-days: 5
+
+  comment:
+    name: Comment results
+    needs: smoke
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const outcome = '${{ needs.smoke.result }}';
+            const icon = outcome === 'success' ? '✅' : outcome === 'failure' ? '❌' : '⚠️';
+            const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+            const body = [
+              `${icon} **PR smoke checks: ${outcome}**`,
+              '',
+              `[View full run](${runUrl}) · Report artifact: \`pr-report-${context.issue.number}\``,
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const marker = '**PR smoke checks:**';
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

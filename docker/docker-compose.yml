@@ -1,0 +1,31 @@
+# Full suite locally: docker compose -f docker/docker-compose.yml up --abort-on-container-exit --exit-code-from tests
+services:
+  tests:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: playwright-tests
+    command: ["--project=chromium", "--reporter=line,html"]
+    environment:
+      TEST_ENV: ${TEST_ENV:-staging}
+      BASE_URL: ${BASE_URL:-https://www.saucedemo.com}
+      SAUCE_PASSWORD: ${SAUCE_PASSWORD:-secret_sauce}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - ../playwright-report:/work/playwright-report
+      - ../test-results:/work/test-results
+      - ../blob-report:/work/blob-report
+    shm_size: 1gb
+
+  # Serves the generated HTML report at http://localhost:9323
+  report-server:
+    image: python:3.12-alpine
+    container_name: playwright-report-server
+    depends_on:
+      - tests
+    command: ["python", "-m", "http.server", "9323", "--directory", "/work/playwright-report"]
+    ports:
+      - "9323:9323"
+    volumes:
+      - ../playwright-report:/work/playwright-report:ro
+    restart: unless-stopped

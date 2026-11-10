@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm lint
+
+  test:
+    name: Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    env:
+      CI: true
+      TEST_ENV: staging
+      SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD || 'secret_sauce' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run tests (shard ${{ matrix.shard }}/4)
+        run: pnpm exec playwright test --project=chromium --shard=${{ matrix.shard }}/4
+
+      - name: Upload blob report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: blob-report
+          retention-days: 7
+
+      - name: Upload traces and failures
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.shard }}
+          path: test-results
+          retention-days: 7
+
+  merge-reports:
+    name: Merge reports
+    needs: test
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download all blob reports
+        uses: actions/download-artifact@v4
+        with:
+          path: blob-report
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML report
+        run: pnpm exec playwright merge-reports --reporter html blob-report
+
+      - name: Upload merged HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report
+          path: playwright-report
+          retention-days: 30

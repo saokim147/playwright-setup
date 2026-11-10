@@ -1,0 +1,19 @@
+# CI override: no bind volumes, hard resource limits, single shard per container.
+# Usage: docker compose -f docker/docker-compose.yml -f docker/docker-compose.ci.yml up
+services:
+  tests:
+    container_name: playwright-tests-ci
+    command: ["--project=chromium", "--reporter=line,blob,html"]
+    volumes: [] # CI containers must not touch host paths
+    shm_size: 512mb
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4g
+        reservations:
+          memory: 1g
+    restart: "no"
+
+  report-server:
+    restart: "no"

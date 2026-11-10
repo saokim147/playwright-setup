@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: qa-automation
+  labels:
+    app.kubernetes.io/name: playwright-tests
+    app.kubernetes.io/component: test-runner
+    environment: staging

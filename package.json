@@ -1,0 +1,52 @@
+{
+  "name": "enterprise-playwright-framework",
+  "version": "1.0.0",
+  "description": "Enterprise-grade Playwright test automation framework: POM, fixtures, sharded CI, Docker/K8s, visual/a11y/performance testing",
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:mobile": "playwright test --project=mobile-chrome",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep-invert @smoke",
+    "test:e2e": "playwright test tests/e2e",
+    "test:visual": "playwright test tests/visual",
+    "test:a11y": "playwright test tests/accessibility",
+    "test:performance": "playwright test tests/performance",
+    "visual:update": "playwright test tests/visual --update-snapshots",
+    "lint": "tsc --noEmit",
+    "report": "playwright show-report playwright-report --port 9323",
+    "clean": "rm -rf test-results playwright-report blob-report .auth"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.18.0",
+      "onFail": "download"
+    }
+  },
+  "keywords": [
+    "playwright",
+    "e2e",
+    "page-object-model",
+    "typescript",
+    "docker",
+    "kubernetes",
+    "ci-cd"
+  ],
+  "author": "QA Platform Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@faker-js/faker": "^10.1.0",
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^26.6.6",
+    "typescript": "^5.9.3"
+  }
+}

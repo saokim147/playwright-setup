@@ -1,0 +1,57 @@
+name: Nightly Regression
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # 02:00 UTC daily
+  workflow_dispatch:
+
+concurrency:
+  group: nightly-regression
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    name: Full regression (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - chromium
+          - firefox
+          - webkit
+    env:
+      CI: true
+      TEST_ENV: staging
+      SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD || 'secret_sauce' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install browser (${{ matrix.browser }})
+
+      - name: Run full suite (${{ matrix.browser }})
+        run: pnpm exec playwright test --project=${{ matrix.browser }}
+
+      - name: Upload report (${{ matrix.browser }})
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-report-${{ matrix.browser }}
+          path: |
+            playwright-report
+            test-results
+          retention-days: 14
