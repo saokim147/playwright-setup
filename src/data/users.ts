@@ -3,7 +3,7 @@ import type { User, UserRole } from '../types/index.js';
 
 /**
  * Test users resolved from environment configuration.
- * Passwords and usernames are overridable via SAUCE_* env vars (see k8s/secret.yml).
+ * Passwords and usernames are overridable via SAUCE_* env vars.
  */
 export const users = {
   get standard(): User {

@@ -22,7 +22,6 @@ COPY --from=deps --chown=pwuser:pwuser /work/node_modules ./node_modules
 COPY --chown=pwuser:pwuser package.json pnpm-lock.yaml tsconfig.json playwright.config.ts ./
 COPY --chown=pwuser:pwuser src ./src
 COPY --chown=pwuser:pwuser tests ./tests
-COPY --chown=pwuser:pwuser tests/visual/login.visual.spec.ts-snapshots ./tests/visual/login.visual.spec.ts-snapshots
 
 ENV CI=true \
     TEST_ENV=staging \

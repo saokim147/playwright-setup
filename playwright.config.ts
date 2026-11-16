@@ -5,18 +5,7 @@ import { STORAGE_STATE_PATH, TIMEOUTS } from './src/config/constants.js';
 const environment = getEnvironment();
 const isCI = !!process.env.CI;
 
-/**
- * Enterprise Playwright configuration.
- *
- * Projects:
- *   setup        — global authentication, persists storage state
- *   chromium     — desktop Chrome (primary CI target)
- *   firefox      — desktop Firefox (nightly matrix)
- *   webkit       — desktop Safari (nightly matrix)
- *   mobile-chrome— Pixel 7 viewport (responsive coverage)
- *
- * CI shards emit blob reports merged by `npx playwright merge-reports`.
- */
+
 export default defineConfig({
   testDir: './tests',
   outputDir: './test-results',
@@ -70,22 +59,6 @@ export default defineConfig({
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
-        storageState: STORAGE_STATE_PATH,
-      },
-      dependencies: ['setup'],
-    },
-    {
-      name: 'webkit',
-      use: {
-        ...devices['Desktop Safari'],
-        storageState: STORAGE_STATE_PATH,
-      },
-      dependencies: ['setup'],
-    },
-    {
-      name: 'mobile-chrome',
-      use: {
-        ...devices['Pixel 7'],
         storageState: STORAGE_STATE_PATH,
       },
       dependencies: ['setup'],

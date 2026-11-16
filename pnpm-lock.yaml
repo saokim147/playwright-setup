@@ -165,6 +165,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      papaparse:
+        specifier: ^5.7.0
+        version: 5.7.0
     devDependencies:
       '@axe-core/playwright':
         specifier: ^4.10.2
@@ -178,6 +182,9 @@ importers:
       '@types/node':
         specifier: ^26.6.6
         version: 26.6.6
+      '@types/papaparse':
+        specifier: ^5.5.2
+        version: 5.5.2
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -202,9 +209,15 @@ packages:
   '@types/node@26.6.6':
     resolution: {integrity: sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==}
 
+  '@types/papaparse@5.5.2':
+    resolution: {integrity: sha512-gFnFp/JMzLHCwRf7tQHrNnfhN4eYBVYYI897CGX4MY1tzY9l2aLkVyx2IlKZ/SAqDbB3I1AOZW5gTMGGsqWliA==}
+
   axe-core@4.14.0:
     resolution: {integrity: sha512-9WTZxEjsZ7b13TH8JPmbV2z8CHbl80/2hm3XPEG4JgNdQLK81IBRXmSxHfMAOkSqQeRxT/0dwNDz2GOm3zzpcQ==}
     engines: {node: '>=4'}
+
+  papaparse@5.7.0:
+    resolution: {integrity: sha512-qBGxg/7Q3Kl9Wfhrz2Z74UnvnHTXLNG6jmKJFeBvP2+y4lV7So+7SR62+Zd47JvdrCkX+nDcnr0ObPzek/+6RA==}
 
   playwright-core@1.65.0:
     resolution: {integrity: sha512-vNSKgH6YqtN7cdT/L334zo0a+YwkrpicyrHJlWWPIm/Q+Nn2SWInil01oT0mbu96U4GgoRtCYQD9CzJQgju+lA==}
@@ -241,7 +254,13 @@ snapshots:
     dependencies:
       undici-types: 8.9.0
 
+  '@types/papaparse@5.5.2':
+    dependencies:
+      '@types/node': 26.6.6
+
   axe-core@4.14.0: {}
+
+  papaparse@5.7.0: {}
 
   playwright-core@1.65.0: {}
 

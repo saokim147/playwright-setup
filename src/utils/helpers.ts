@@ -9,7 +9,6 @@ interface VitalsBuffer {
   fcpMs: number | null;
 }
 
-/** layout-shift entry shape — not part of TS's baseline DOM lib. */
 interface LayoutShiftEntry extends PerformanceEntry {
   value: number;
   hadRecentInput: boolean;
@@ -21,10 +20,7 @@ declare global {
   }
 }
 
-/**
- * Collect navigation + resource metrics for the page currently loaded.
- * Must be called after `page.goto()` has resolved.
- */
+
 export async function measurePageLoad(page: Page): Promise<LoadMetrics> {
   const raw = await page.evaluate(() => {
 

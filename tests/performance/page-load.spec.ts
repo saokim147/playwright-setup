@@ -3,10 +3,7 @@ import { measurePageLoad, measureWebVitals } from '../../src/utils/helpers.js';
 import { baseUrl } from '../../src/config/environments.js';
 import { ROUTES, THRESHOLDS } from '../../src/config/constants.js';
 
-/**
- * Performance: Core Web Vitals + load thresholds against the environment
- * base URL. Thresholds live in src/config/constants.ts (THRESHOLDS).
- */
+
 test.describe('Page load performance @performance', () => {
   test('login page loads within budget @smoke', async ({ page }) => {
     await page.goto(ROUTES.login, { waitUntil: 'load' });

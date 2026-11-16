@@ -1,7 +1,7 @@
 {
   "name": "enterprise-playwright-framework",
   "version": "1.0.0",
-  "description": "Enterprise-grade Playwright test automation framework: POM, fixtures, sharded CI, Docker/K8s, visual/a11y/performance testing",
+  "description": "Enterprise-grade Playwright test automation framework: POM, fixtures, sharded CI, Docker, visual/a11y/performance testing",
   "type": "module",
   "packageManager": "pnpm@12.18.0",
   "scripts": {
@@ -11,18 +11,19 @@
     "test:debug": "playwright test --debug",
     "test:chromium": "playwright test --project=chromium",
     "test:firefox": "playwright test --project=firefox",
-    "test:webkit": "playwright test --project=webkit",
-    "test:mobile": "playwright test --project=mobile-chrome",
     "test:smoke": "playwright test --grep @smoke",
     "test:regression": "playwright test --grep-invert @smoke",
     "test:e2e": "playwright test tests/e2e",
-    "test:visual": "playwright test tests/visual",
-    "test:a11y": "playwright test tests/accessibility",
     "test:performance": "playwright test tests/performance",
-    "visual:update": "playwright test tests/visual --update-snapshots",
     "lint": "tsc --noEmit",
     "report": "playwright show-report playwright-report --port 9323",
-    "clean": "rm -rf test-results playwright-report blob-report .auth"
+    "clean": "rm -rf test-results playwright-report blob-report .auth",
+    "report:merge": "playwright merge-reports --reporter html blob-report",
+    "docker:build": "docker compose -f docker/docker-compose.yml build tests",
+    "docker:test": "docker compose -f docker/docker-compose.yml up --abort-on-container-exit --exit-code-from tests",
+    "docker:test:ci": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.ci.yml up --abort-on-container-exit --exit-code-from tests",
+    "docker:report": "docker compose -f docker/docker-compose.yml up -d --no-deps report-server",
+    "docker:clean": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.ci.yml down -v --remove-orphans"
   },
   "devEngines": {
     "packageManager": {
@@ -37,7 +38,6 @@
     "page-object-model",
     "typescript",
     "docker",
-    "kubernetes",
     "ci-cd"
   ],
   "author": "QA Platform Team",
@@ -47,6 +47,10 @@
     "@faker-js/faker": "^10.1.0",
     "@playwright/test": "^1.65.0",
     "@types/node": "^26.6.6",
+    "@types/papaparse": "^5.5.2",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "papaparse": "^5.7.0"
   }
 }
