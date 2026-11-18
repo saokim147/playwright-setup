@@ -16,7 +16,6 @@ test.describe('Logout', () => {
     await page.goto(ROUTES.inventory);
     await header.logout();
 
-    // Direct navigation to a protected route bounces back to login.
     await page.goto(ROUTES.inventory);
     await page.waitForURL(/.*\/(index\.html)?$/, { timeout: TIMEOUTS.default });
     await loginPage.expectLoginFormVisible();

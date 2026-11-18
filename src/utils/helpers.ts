@@ -2,7 +2,6 @@ import type { Page } from '@playwright/test';
 import type { LoadMetrics, WebVitals } from '../types/index.js';
 import { Logger } from './logger.js';
 
-
 interface VitalsBuffer {
   lcpMs: number | null;
   cls: number;
@@ -19,7 +18,6 @@ declare global {
     __vitals?: VitalsBuffer;
   }
 }
-
 
 export async function measurePageLoad(page: Page): Promise<LoadMetrics> {
   const raw = await page.evaluate(() => {
@@ -57,10 +55,6 @@ export async function measurePageLoad(page: Page): Promise<LoadMetrics> {
   return metrics;
 }
 
-/**
- * Navigate to a URL with buffered web-vital observers injected up front,
- * then collect LCP / CLS / FCP after load settles.
- */
 export async function measureWebVitals(page: Page, url: string, settleMs = 1_500): Promise<WebVitals> {
   await page.addInitScript(() => {
     const buffered: VitalsBuffer = { lcpMs: null, cls: 0, fcpMs: null };
@@ -74,7 +68,7 @@ export async function measureWebVitals(page: Page, url: string, settleMs = 1_500
 
     new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
-        // layout-shift entries expose hadRecentInput/value beyond base PerformanceEntry
+
         const shift = entry as LayoutShiftEntry;
         if (!shift.hadRecentInput) buffered.cls += shift.value;
       }
@@ -104,7 +98,6 @@ export async function measureWebVitals(page: Page, url: string, settleMs = 1_500
   return vitals;
 }
 
-/** Wait until no network requests have been issued for `idleMs`. */
 export async function waitForNetworkIdle(page: Page, idleMs = 500, timeoutMs = 15_000): Promise<void> {
   const start = Date.now();
   let lastActivity = Date.now();
@@ -119,7 +112,6 @@ export async function waitForNetworkIdle(page: Page, idleMs = 500, timeoutMs = 1
   throw new Error(`Network did not go idle within ${timeoutMs}ms`);
 }
 
-/** Block requests matching any of the given URL substrings (e.g. ads, analytics). */
 export async function blockRequests(page: Page, patterns: string[]): Promise<void> {
   await page.route('**/*', (route) =>
     patterns.some((p) => route.request().url().includes(p)) ? route.abort() : route.continue(),

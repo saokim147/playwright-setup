@@ -1,10 +1,6 @@
 import { getUser } from '../config/environments.js';
 import type { User, UserRole } from '../types/index.js';
 
-/**
- * Test users resolved from environment configuration.
- * Passwords and usernames are overridable via SAUCE_* env vars.
- */
 export const users = {
   get standard(): User {
     return getUser('standard');

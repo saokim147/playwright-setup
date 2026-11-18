@@ -1,6 +1,5 @@
 name: Deploy Reports
 
-# Publishes the merged HTML report to GitHub Pages after CI succeeds on main.
 on:
   workflow_run:
     workflows: [CI]

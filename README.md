@@ -14,14 +14,14 @@ pnpm exec playwright install --with-deps chromium firefox
 ## Run tests
 
 ```bash
-pnpm test:chromium       # Full suite on Chromium
-pnpm test:firefox        # Full suite on Firefox
-pnpm test               # All configured browsers
-pnpm test:smoke          # Smoke tests
-pnpm test:e2e            # Functional tests
-pnpm test:performance    # Page-load tests
-pnpm test:ui             # Interactive runner
-pnpm lint                # Typecheck
+pnpm test:chromium
+pnpm test:firefox
+pnpm test
+pnpm test:smoke
+pnpm test:e2e
+pnpm test:performance
+pnpm test:ui
+pnpm lint
 ```
 
 Pass Playwright options directly, for example:
@@ -34,8 +34,8 @@ pnpm test:chromium --shard=1/4
 ## Reports
 
 ```bash
-pnpm report              # Open HTML report at http://localhost:9323
-pnpm report:merge        # Merge blob reports after sharded runs
+pnpm report
+pnpm report:merge
 ```
 
 Failure artifacts are saved in `test-results/`; logs are in `logs/`.
@@ -43,11 +43,11 @@ Failure artifacts are saved in `test-results/`; logs are in `logs/`.
 ## Docker
 
 ```bash
-pnpm docker:build        # Build the test container
-pnpm docker:test         # Run Chromium tests
-pnpm docker:test:ci      # Run with CI resource limits
-pnpm docker:report       # Serve the existing report at http://localhost:9323
-pnpm docker:clean        # Stop containers and remove volumes
+pnpm docker:build
+pnpm docker:test
+pnpm docker:test:ci
+pnpm docker:report
+pnpm docker:clean
 ```
 
 ## Configuration
@@ -69,7 +69,3 @@ Use `SAUCE_PASSWORD` and `SAUCE_*_USER` to override demo credentials. See [envir
 - `src/utils/`, `src/types/` — helpers and types
 - `tests/` — functional, performance, and authentication setup tests
 - `.github/workflows/` — CI, nightly runs, and report publishing
-
-## License
-
-MIT

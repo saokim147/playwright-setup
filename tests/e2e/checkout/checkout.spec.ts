@@ -17,18 +17,15 @@ test.describe('Checkout — full 3-step flow', () => {
     const expectedSubtotal =
       Math.round(selected.reduce((sum, p) => sum + p.price, 0) * 100) / 100;
 
-    // Step 0 — build the cart
     await page.goto(ROUTES.inventory);
     for (const product of selected) {
       await inventoryPage.addItem(product.name);
     }
     await header.openCart();
 
-    // Step 1 — shipping information
     await cartPage.proceedToCheckout();
     await checkoutPage.fillShippingInfo(info);
 
-    // Step 2 — order overview
     expect(await checkoutPage.getSummaryItemNames()).toEqual(
       expect.arrayContaining(selected.map((p) => p.name)),
     );
@@ -40,7 +37,6 @@ test.describe('Checkout — full 3-step flow', () => {
       2,
     );
 
-    // Step 3 — confirmation
     await checkoutPage.finish();
     expect(await checkoutPage.getConfirmationText()).toBe('Thank you for your order!');
 

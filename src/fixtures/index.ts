@@ -7,10 +7,7 @@ import { CartPage } from '../pages/cart.page.js';
 import { CheckoutPage } from '../pages/checkout.page.js';
 import { HeaderComponent } from '../components/header.component.js';
 
-/**
- * Custom fixtures: every page object and component, pre-bound to the test's
- * page instance. Tests never construct page objects manually.
- */
+
 type FrameworkFixtures = {
   loginPage: LoginPage;
   inventoryPage: InventoryPage;

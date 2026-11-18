@@ -46,7 +46,6 @@ export class CheckoutPage extends BasePage {
     return this;
   }
 
-  /** Step 1: submit shipping info and land on the overview page. */
   async fillShippingInfo(info: CheckoutInfo): Promise<void> {
     await Logger.step('CheckoutPage', 'fill shipping information', async () => {
       await this.firstNameInput.fill(info.firstName);
@@ -57,7 +56,6 @@ export class CheckoutPage extends BasePage {
     });
   }
 
-  /** Submit shipping info expecting validation failure (stays on step one). */
   async submitInvalidInfo(info: Partial<CheckoutInfo>): Promise<void> {
     await this.firstNameInput.fill(info.firstName ?? '');
     await this.lastNameInput.fill(info.lastName ?? '');
@@ -70,7 +68,6 @@ export class CheckoutPage extends BasePage {
     return this.textOf(this.errorMessage);
   }
 
-  /** Step 2 helpers: parsed totals from the overview. */
   async getSubtotal(): Promise<number> {
     const text = await this.textOf(this.subtotalLabel);
     return parseFloat(text.replace(/[^0-9.]/g, ''));
@@ -92,7 +89,6 @@ export class CheckoutPage extends BasePage {
       .allTextContents() as Promise<string[]>;
   }
 
-  /** Step 3: confirm the order and land on the completion page. */
   async finish(): Promise<void> {
     await Logger.step('CheckoutPage', 'finish checkout', async () => {
       await this.finishButton.click();

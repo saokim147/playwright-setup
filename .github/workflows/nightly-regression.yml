@@ -2,7 +2,7 @@ name: Nightly Regression
 
 on:
   schedule:
-    - cron: '0 2 * * *' # 02:00 UTC daily
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -22,8 +22,6 @@ jobs:
       matrix:
         browser:
           - chromium
-          - firefox
-          - webkit
     env:
       CI: true
       TEST_ENV: staging

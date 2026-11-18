@@ -3,10 +3,10 @@ import { join } from 'node:path';
 
 type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';
 const COLORS: Record<LogLevel, string> = {
-  DEBUG: '\x1b[90m', // gray
-  INFO: '\x1b[36m', // cyan
-  WARN: '\x1b[33m', // yellow
-  ERROR: '\x1b[31m', // red
+  DEBUG: '\x1b[90m',
+  INFO: '\x1b[36m',
+  WARN: '\x1b[33m',
+  ERROR: '\x1b[31m',
 };
 
 const RESET = '\x1b[0m';
@@ -14,8 +14,6 @@ const BOLD = '\x1b[1m';
 
 const LEVEL_ORDER: Record<LogLevel, number> = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
 
-
-/* 'DD-MM-YYYY HH:mm:ss.mmm' stamp (UTC) */
 function formatDate(date: Date): string {
   const iso = date.toISOString();
   return `${iso.slice(8, 10)}-${iso.slice(5, 7)}-${iso.slice(0, 4)}-${iso.slice(11, 23)}`;
@@ -36,12 +34,12 @@ function writeToFile(line: string): void {
       logDirReady = true;
     }
     appendFileSync(LOG_FILE, line + '\n', { flag: 'a' });
-  } 
+  }
   catch {}
 }
 
 function emit(level: LogLevel, scope: string, message: string): void {
-  if (LEVEL_ORDER[level] === undefined) return; 
+  if (LEVEL_ORDER[level] === undefined) return;
   const now = new Date();
   const stamp = formatDate(now);
   const tag = `${COLORS[level]}${BOLD}[${level}]${RESET}`;
@@ -49,7 +47,6 @@ function emit(level: LogLevel, scope: string, message: string): void {
   console.log(`${COLORS['DEBUG']}${stamp}${RESET} ${tag} ${origin} — ${message}`);
   writeToFile(`${stamp} [${level}]${workerTag} ${scope} — ${message}`);
 }
-
 
 export class Logger {
   private constructor() {  }

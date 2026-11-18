@@ -3,10 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 import { baseUrl } from '../config/environments.js';
 import { TIMEOUTS } from '../config/constants.js';
 import { Logger } from '../utils/logger.js';
-/**
- * Abstract base page: owns navigation, common waits, and structured logging.
- * Every page object extends this and declares its own selectors.
- */
+
 export abstract class BasePage {
   constructor(public readonly page: Page) {}
 
@@ -42,7 +39,6 @@ export abstract class BasePage {
     });
   }
 
-  /** Text of the first element matching locator, trimmed. */
   async textOf(locator: Locator): Promise<string> {
     return (await locator.first().textContent())?.trim() ?? '';
   }

@@ -1,10 +1,6 @@
 import { faker } from '@faker-js/faker';
 import type { CheckoutInfo } from '../../types/index.js';
 
-/**
- * Faker-powered data factory for checkout shipping information.
- * Generates realistic but disposable identities per test run.
- */
 export function createCheckoutInfo(overrides: Partial<CheckoutInfo> = {}): CheckoutInfo {
   return {
     firstName: faker.person.firstName(),
@@ -14,7 +10,6 @@ export function createCheckoutInfo(overrides: Partial<CheckoutInfo> = {}): Check
   };
 }
 
-/** Invalid variants for checkout step-one validation tests. */
 export function invalidCheckoutInfos(): { label: string; info: Partial<CheckoutInfo>; error: string }[] {
   const base = createCheckoutInfo();
   return [

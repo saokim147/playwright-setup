@@ -4,7 +4,6 @@ import { ROUTES, TIMEOUTS } from '../config/constants.js';
 import { Logger } from '../utils/logger.js';
 import { BasePage } from './base.page.js';
 
-/** Login page: credential entry, error surface, session bootstrap. */
 export class LoginPage extends BasePage {
   readonly usernameInput: Locator;
   readonly passwordInput: Locator;
@@ -25,13 +24,12 @@ export class LoginPage extends BasePage {
     return this;
   }
 
-  /** Submit credentials and wait for redirect away from the login route. */
   async login(user: User): Promise<void> {
     await Logger.step('LoginPage', `login as ${user.role}`, async () => {
       await this.usernameInput.fill(user.username);
       await this.passwordInput.fill(user.password);
       await this.loginButton.click();
-      // login failure keeps us on / (or /index.html); success redirects away
+
       await this.page.waitForURL(
         (url) => !['/', '/index.html'].includes(url.pathname),
         { timeout: TIMEOUTS.slow },
@@ -39,7 +37,6 @@ export class LoginPage extends BasePage {
     });
   }
 
-  /** Submit credentials but expect to stay on the login page (failure path). */
   async loginExpectingFailure(user: User): Promise<void> {
     await this.usernameInput.fill(user.username);
     await this.passwordInput.fill(user.password);

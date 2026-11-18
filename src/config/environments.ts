@@ -1,12 +1,5 @@
 import type { EnvironmentConfig, EnvironmentName, User, UserRole } from '../types/index.js';
 
-/**
- * Multi-environment configuration.
- *
- * The active environment is resolved from (in order):
- *   1. TEST_ENV / ENV process variable
- *   2. 'staging' as a safe default
- */
 export const environments: Record<EnvironmentName, EnvironmentConfig> = {
   staging: {
     name: 'staging',
@@ -31,7 +24,6 @@ export function getEnvironment(name?: string): EnvironmentConfig {
   return env;
 }
 
-/** Shared password for all demo roles; overridable via SAUCE_PASSWORD. */
 const password = process.env.SAUCE_PASSWORD ?? 'secret_sauce';
 
 const usernames: Record<UserRole, string> = {
@@ -43,7 +35,6 @@ const usernames: Record<UserRole, string> = {
   visual: process.env.SAUCE_VISUAL_USER ?? 'visual_user',
 };
 
-/** Resolve credentials for a role, honoring environment overrides. */
 export function getUser(role: UserRole = getEnvironment().defaultUserRole): User {
   return { role, username: usernames[role], password };
 }

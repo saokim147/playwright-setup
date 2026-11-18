@@ -43,11 +43,10 @@ export class InventoryPage extends BasePage {
     return this.page.getByTestId(`remove-${productIdFromName(name)}`).isVisible();
   }
 
-  /** Apply a sort option and wait for the re-ordered list to render. */
   async sortBy(option: SortOption): Promise<void> {
     await Logger.step('InventoryPage', `sort by ${option}`, async () => {
       await this.sortDropdown.selectOption(SORT_VALUES[option]);
-      await this.page.waitForTimeout(250); // allow re-render to settle
+      await this.page.waitForTimeout(250);
     });
   }
 
